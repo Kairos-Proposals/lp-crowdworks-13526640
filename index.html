@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos ご提案 | 毎週その瞬間に、迷わず予約を実行する仕組みを</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0B1220;
+    --bg-panel:#131F38;
+    --bg-panel2:#182A4A;
+    --brass:#C9A24B;
+    --brass-soft:#E4C77A;
+    --cyan:#4FD1C5;
+    --text-light:#EAEEF4;
+    --text-muted:#8C98AE;
+    --line:rgba(201,162,75,0.25);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg-deep);
+    color:var(--text-light);
+    font-family:'Noto Sans JP', sans-serif;
+    line-height:1.8;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.en{
+    font-family:'Space Grotesk', 'Noto Sans JP', sans-serif;
+  }
+  a{color:inherit;text-decoration:none;}
+  img{display:block;max-width:100%;}
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:0 24px;
+  }
+  .gear-bg{
+    position:absolute;
+    border-radius:50%;
+    background: repeating-conic-gradient(rgba(201,162,75,0.10) 0deg 9deg, transparent 9deg 18deg);
+    pointer-events:none;
+  }
+
+  /* ===== HERO ===== */
+  header.hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    padding:120px 0 80px;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(79,209,197,0.07), transparent 55%),
+      radial-gradient(ellipse at 90% 100%, rgba(201,162,75,0.10), transparent 55%),
+      var(--bg-deep);
+    overflow:hidden;
+  }
+  .gear-bg.g1{width:420px;height:420px;top:-140px;right:-120px;}
+  .gear-bg.g2{width:260px;height:260px;bottom:-80px;left:-100px;}
+
+  .hero-inner{
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:48px;
+    align-items:center;
+    width:100%;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--brass-soft);
+    border:1px solid var(--line);
+    padding:7px 16px;
+    border-radius:999px;
+    margin-bottom:28px;
+  }
+  .badge::before{
+    content:"";
+    width:7px;height:7px;border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan);
+  }
+  h1.catch{
+    font-size:clamp(28px,4.2vw,46px);
+    font-weight:700;
+    line-height:1.5;
+    color:var(--text-light);
+    margin-bottom:22px;
+    letter-spacing:0.01em;
+  }
+  h1.catch span{
+    color:var(--brass-soft);
+  }
+  .hero-sub{
+    color:var(--text-muted);
+    font-size:15.5px;
+    max-width:520px;
+    margin-bottom:34px;
+  }
+  .hero-meta{
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+  }
+  .hero-meta div{
+    border-left:2px solid var(--brass);
+    padding-left:12px;
+  }
+  .hero-meta .label{
+    font-size:11px;
+    color:var(--text-muted);
+    letter-spacing:0.1em;
+  }
+  .hero-meta .value{
+    font-size:14px;
+    color:var(--text-light);
+    font-weight:500;
+    margin-top:2px;
+  }
+
+  /* clock */
+  .clock-stage{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+  }
+  .clock{
+    width:280px;
+    height:280px;
+    border-radius:50%;
+    border:3px solid var(--brass);
+    position:relative;
+    background:
+      radial-gradient(circle at 32% 28%, #1C2E4F, #0D1626 72%);
+    box-shadow:0 0 0 10px rgba(201,162,75,0.05), 0 20px 60px rgba(0,0,0,0.5);
+  }
+  .clock .tick{
+    position:absolute;
+    width:3px;height:14px;
+    background:var(--brass);
+    left:50%;top:6px;
+    transform-origin:1.5px 134px;
+  }
+  .clock .num{
+    position:absolute;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:14px;
+    color:var(--text-muted);
+  }
+  .num.n12{top:18px;left:50%;transform:translateX(-50%);}
+  .num.n3{right:18px;top:50%;transform:translateY(-50%);}
+  .num.n6{bottom:18px;left:50%;transform:translateX(-50%);}
+  .num.n9{left:18px;top:50%;transform:translateY(-50%);}
+  .hand{
+    position:absolute;
+    left:50%;top:50%;
+    border-radius:4px;
+    transform-origin:bottom center;
+  }
+  .hand.hour{
+    width:6px;height:68px;
+    background:var(--brass-soft);
+    transform:translate(-50%,-100%) rotate(285deg);
+  }
+  .hand.minute{
+    width:4px;height:96px;
+    background:var(--cyan);
+    transform:translate(-50%,-100%) rotate(180deg);
+  }
+  .center-dot{
+    position:absolute;left:50%;top:50%;
+    width:13px;height:13px;border-radius:50%;
+    background:var(--brass);
+    transform:translate(-50%,-50%);
+    box-shadow:0 0 10px rgba(201,162,75,0.6);
+  }
+  .clock-caption{
+    position:absolute;
+    bottom:-42px;
+    text-align:center;
+    width:100%;
+    font-size:12px;
+    letter-spacing:0.12em;
+    color:var(--text-muted);
+  }
+  .clock-caption b{color:var(--brass-soft);font-weight:600;}
+
+  /* section generic */
+  section{
+    position:relative;
+    padding:100px 0;
+  }
+  .sec-head{
+    margin-bottom:54px;
+    max-width:720px;
+  }
+  .sec-tag{
+    font-size:12px;
+    letter-spacing:0.2em;
+    color:var(--cyan);
+    margin-bottom:14px;
+    display:block;
+  }
+  .sec-title{
+    font-size:clamp(22px,3vw,32px);
+    font-weight:700;
+    color:var(--text-light);
+  }
+
+  /* understanding */
+  .understand{
+    background:
+      linear-gradient(180deg, var(--bg-panel), var(--bg-deep));
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .understand-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:40px;
+  }
+  .u-block{
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:28px 26px;
+  }
+  .u-block h3{
+    font-size:16px;
+    color:var(--brass-soft);
+    margin-bottom:12px;
+    font-weight:600;
+  }
+  .u-block p{
+    color:var(--text-muted);
+    font-size:14.5px;
+  }
+  .spec-tags{
+    margin-top:16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .spec-tags span{
+    font-size:12px;
+    padding:5px 12px;
+    border:1px solid var(--brass);
+    color:var(--brass-soft);
+    border-radius:999px;
+  }
+
+  /* value cards */
+  .value-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:26px;
+  }
+  .value-card{
+    background:linear-gradient(160deg, var(--bg-panel2), var(--bg-panel));
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:30px 26px;
+    position:relative;
+    overflow:hidden;
+  }
+  .value-card::before{
+    content:"";
+    position:absolute;
+    top:-40%;right:-40%;
+    width:140px;height:140px;
+    background:repeating-conic-gradient(rgba(79,209,197,0.08) 0deg 8deg, transparent 8deg 16deg);
+    border-radius:50%;
+  }
+  .value-num{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:13px;
+    color:var(--cyan);
+    letter-spacing:0.1em;
+    margin-bottom:16px;
+    display:block;
+  }
+  .value-card h3{
+    font-size:17px;
+    margin-bottom:12px;
+    color:var(--text-light);
+    font-weight:600;
+  }
+  .value-card p{
+    font-size:14px;
+    color:var(--text-muted);
+  }
+
+  /* process timeline */
+  .process{
+    background:var(--bg-panel);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .timeline{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:18px;
+    position:relative;
+  }
+  .timeline::before{
+    content:"";
+    position:absolute;
+    top:22px;left:0;right:0;
+    height:1px;
+    background:linear-gradient(90deg, transparent, var(--brass), transparent);
+  }
+  .tl-item{
+    position:relative;
+    padding-top:60px;
+    text-align:left;
+  }
+  .tl-dot{
+    position:absolute;
+    top:0;left:0;
+    width:44px;height:44px;
+    border-radius:50%;
+    border:2px solid var(--brass);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    color:var(--brass-soft);
+    background:var(--bg-deep);
+    font-size:14px;
+  }
+  .tl-item h4{
+    font-size:14.5px;
+    margin-bottom:8px;
+    color:var(--text-light);
+  }
+  .tl-item p{
+    font-size:12.8px;
+    color:var(--text-muted);
+  }
+  .tl-time{
+    display:inline-block;
+    margin-top:10px;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--cyan);
+  }
+
+  /* closing */
+  .closing{
+    text-align:center;
+    padding:120px 0 140px;
+    position:relative;
+  }
+  .closing::before{
+    content:"";
+    position:absolute;
+    width:500px;height:500px;
+    left:50%;top:0;
+    transform:translate(-50%,-30%);
+    background:radial-gradient(circle, rgba(201,162,75,0.10), transparent 70%);
+    pointer-events:none;
+  }
+  .closing h2{
+    font-size:clamp(24px,3.6vw,38px);
+    margin-bottom:22px;
+    font-weight:700;
+  }
+  .closing p{
+    color:var(--text-muted);
+    max-width:560px;
+    margin:0 auto 38px;
+    font-size:15px;
+  }
+  .cta-btn{
+    display:inline-block;
+    padding:17px 46px;
+    background:linear-gradient(135deg, var(--brass-soft), var(--brass));
+    color:#121A2B;
+    font-weight:700;
+    border-radius:4px;
+    letter-spacing:0.05em;
+    font-size:15px;
+    box-shadow:0 10px 30px rgba(201,162,75,0.25);
+  }
+  .foot-note{
+    margin-top:30px;
+    font-size:12px;
+    color:var(--text-muted);
+    letter-spacing:0.05em;
+  }
+  footer{
+    text-align:center;
+    padding:30px 0;
+    border-top:1px solid var(--line);
+    color:var(--text-muted);
+    font-size:12px;
+  }
+
+  @media (max-width:860px){
+    .hero-inner{grid-template-columns:1fr;}
+    .clock-stage{order:-1;margin-bottom:10px;}
+    .understand-grid{grid-template-columns:1fr;}
+    .value-grid{grid-template-columns:1fr 1fr;}
+    .timeline{grid-template-columns:1fr 1fr;}
+    .timeline::before{display:none;}
+  }
+  @media (max-width:560px){
+    .value-grid{grid-template-columns:1fr;}
+    .timeline{grid-template-columns:1fr;}
+    section{padding:70px 0;}
+    .clock{width:220px;height:220px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="gear-bg g1"></div>
+  <div class="gear-bg g2"></div>
+  <div class="wrap hero-inner">
+    <div>
+      <span class="badge en">KAIROS PROPOSAL / for nyktothering</span>
+      <h1 class="catch">毎週その<span>一瞬</span>に、<br>人の手を離れて予約を実行する。</h1>
+      <p class="hero-sub">
+        「特定の曜日・指定時間に自動ログインし、予約を完了させる」——<br>
+        これは時間の正確さと、サイト仕様への理解がすべてを決めるお仕事です。
+        Kairosは、その一瞬を逃さない自動化プログラムをご提案します。
+      </p>
+      <div class="hero-meta">
+        <div>
+          <div class="label en">TARGET TIME</div>
+          <div class="value">毎週 指定曜日 9:30 起動</div>
+        </div>
+        <div>
+          <div class="label en">SCOPE</div>
+          <div class="value">自動ログイン〜予約クリックまで一気通貫</div>
+        </div>
+        <div>
+          <div class="label en">PRIORITY</div>
+          <div class="value">やり取りの速さ／確実な定時実行</div>
+        </div>
+      </div>
+    </div>
+    <div class="clock-stage">
+      <div class="clock">
+        <div class="num n12 en">12</div>
+        <div class="num n3 en">3</div>
+        <div class="num n6 en">6</div>
+        <div class="num n9 en">9</div>
+        <div class="hand hour"></div>
+        <div class="hand minute"></div>
+        <div class="center-dot"></div>
+        <div class="clock-caption">AM <b>9:30</b> — プログラムが起動する時刻</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="understand">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-tag en">UNDERSTANDING THE REQUEST</span>
+      <h2 class="sec-title">ご依頼内容、このように理解しています</h2>
+    </div>
+    <div class="understand-grid">
+      <div class="u-block">
+        <h3>「予約開始と同時に、確実に」という課題</h3>
+        <p>
+          人気の予約枠は、サイトが開いた瞬間の数秒で埋まってしまう。
+          だからこそ「特定曜日の朝9:30」という起動タイミングと、
+          ID入力不要のサイトに対して文字列・選択・チェックボックスを
+          迷いなく自動入力しきる精度が、この開発の核心だと理解しています。
+        </p>
+        <div class="spec-tags">
+          <span>文字入力 3〜4箇所</span>
+          <span>選択項目 1箇所</span>
+          <span>チェックボックス 2〜3箇所</span>
+          <span>予約クリックまで自動</span>
+        </div>
+      </div>
+      <div class="u-block">
+        <h3>仕様書の細部にブレがあることも織り込み済みです</h3>
+        <p>
+          募集文中、入力項目数の記載に「文字入力4箇所・チェック3箇所」と
+          「文字列4箇所・選択1箇所・チェック2箇所」という2通りの表記が
+          見受けられました。착手前のヒアリングで実サイトを一緒に確認し、
+          項目数・必須条件を一度で確定させてから開発に入ります。
+        </p>
+      </div>
+      <div class="u-block">
+        <h3>サーバー・ドメインは準備済み、スケジューラ選定から</h3>
+        <p>
+          GitHub Actionsのような仕組みでの定時起動を想定されている旨、
+          承知しております。既存のサーバー環境を活かすか、
+          軽量なサーバーレス定期実行にするか、運用のしやすさを基準にご提案します。
+        </p>
+      </div>
+      <div class="u-block">
+        <h3>「返信の速さ」を最も重視される、という点</h3>
+        <p>
+          実行確認は不要・成果物に対する後払い、という進め方からも、
+          スピーディで信頼できるやり取りを求めていらっしゃると理解しました。
+          Kairosはチャット即レスを徹底し、仕様確定から実装までの
+          リードタイムを最短化します。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="value">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-tag en">WHAT KAIROS BRINGS</span>
+      <h2 class="sec-title">Kairosが提供できる価値</h2>
+    </div>
+    <div class="value-grid">
+      <div class="value-card">
+        <span class="value-num en">01</span>
+        <h3>秒単位の定時起動設計</h3>
+        <p>GitHub Actions等のスケジューラを用い、指定曜日・指定時刻（9:30）に遅延なく起動する仕組みを構築します。</p>
+      </div>
+      <div class="value-card">
+        <span class="value-num en">02</span>
+        <h3>精密なフォーム自動入力</h3>
+        <p>文字入力・選択・チェックボックスの各要素を、サイト構造に合わせて正確に自動入力し、予約クリックまで実行します。</p>
+      </div>
+      <div class="value-card">
+        <span class="value-num en">03</span>
+        <h3>サイト仕様変化への耐性</h3>
+        <p>要素の取得方法に余裕を持たせ、サイト側の軽微な変更でも壊れにくいコード設計にします。</p>
+      </div>
+      <div class="value-card">
+        <span class="value-num en">04</span>
+        <h3>シンプルで保守しやすいコード</h3>
+        <p>入力項目や曜日・時刻の変更が、コードの一部修正だけで反映できるよう設計・ドキュメント化します。</p>
+      </div>
+      <div class="value-card">
+        <span class="value-num en">05</span>
+        <h3>レスポンスの速い伴走</h3>
+        <p>ヒアリングから納品まで、チャットでの即レスを徹底。お急ぎの要望にも柔軟に対応します。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-tag en">HOW WE WORK</span>
+      <h2 class="sec-title">進め方・スケジュールイメージ</h2>
+    </div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot en">01</div>
+        <h4>ヒアリング・仕様確定</h4>
+        <p>対象サイト・入力項目・曜日時刻を一緒に確認し、項目数の最終仕様を確定します。</p>
+        <span class="tl-time en">Day 1-2</span>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot en">02</div>
+        <h4>環境設計</h4>
+        <p>実行環境・スケジューラ・使用言語を選定し、既存のサーバー／ドメインとの接続方法を決めます。</p>
+        <span class="tl-time en">Day 2-3</span>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot en">03</div>
+        <h4>開発</h4>
+        <p>自動ログイン・フォーム入力・予約クリックまでの一連の処理を実装します。</p>
+        <span class="tl-time en">Day 3-6</span>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot en">04</div>
+        <h4>リハーサル実行</h4>
+        <p>実際の曜日・時刻にあわせてテスト実行し、動作と入力内容を確認します。</p>
+        <span class="tl-time en">Day 6-7</span>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot en">05</div>
+        <h4>納品・運用サポート</h4>
+        <p>プログラム一式と設定手順をお渡しし、仕様変更時のご相談にも対応します。</p>
+        <span class="tl-time en">Day 7〜</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="wrap">
+    <span class="sec-tag en" style="display:block;text-align:center;">NEXT ACTION</span>
+    <h2>その一瞬を、確実なものに。</h2>
+    <p>
+      仕様のすり合わせからで構いません。まずは対象サイトと入力項目を
+      教えてください。お見積もりとスケジュールを、スピーディにご提示します。
+    </p>
+    <a href="#" class="cta-btn">Kairosに見積もりを依頼する</a>
+    <div class="foot-note">条件提示欄からお気軽にお問い合わせください。チャットでの即レスを徹底しています。</div>
+  </div>
+</section>
+
+<footer>
+  © Kairos — Web制作・システム開発チーム / Proposal for nyktothering
+</footer>
+
+</body>
+</html>
